@@ -1,0 +1,26 @@
+Question 1:
+    The type that variable x should have is a uintptr_t, or virtual address type. This is because all pointers in C are virtual addresses, so setting the char *value to a type designated for virtual addresses should be more appropriate than setting it to a physical address type.
+
+Question 2:
+    Entry | Base Virtual Address | Points to (logically)
+
+    1023    0xffc00000              Page table for top 4MB of phys memory
+    1022    0xff800000              Page table for the next 4MB of phys memory
+    .
+    .
+    .
+    2       0x00800000              Location where user programs generally begin
+    1       0x00400000              Location used for temporary page mappings
+    0       0x00000000              Unmapped location for catching null pointer dereference errors
+
+Question 3:
+    The user programs will not be able to read or write the kernel's memory because the pages responsible for mapping to that memory will have permissions set such that only the kernel can read and write to its memory.
+
+Question 4:
+    The maximum amount of physical memory that this OS can support is the memory max - KERNBASE, or 256 MB.
+
+Question 5:
+    The amount of space overhead is made up of the datastructures for the page directory, page tables, and struct PageInfo arrays. The size of the pte_t array kern_pgdir for storing page tables and their entries is NPTENTRIES * NPDENTRIES * 4 bytes, which is 4 MB. The size of the struct PageInfo array pages is npages *size of struct PageInfo(8 bytes), which is 256 KB.
+
+Question 6:
+    We transition to running at an EIP above KERNBASE after we finish setting up a temporary mapping from VA [0, 4MB) to PA [0, 4MB). Executing at a low EIP is possible because the mappings are direct such that you only need to subtract KERNBASE from the VA to get the PA. This transition is necessary so that we can access the entire physical memory of 256 MB.

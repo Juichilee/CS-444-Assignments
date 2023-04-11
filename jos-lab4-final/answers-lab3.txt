@@ -1,0 +1,7 @@
+Question 1: If we have the same handler handle all of the exceptions/interrupts, we would not be able to record the number of the interrupt. Moreover, it would be difficult to identify what type of errors they represent.
+
+Question 2: The reason why the script generated trap 13 instead of 14 for softint was because the privilege level for a page fault in the IDT is ring level 0. Since the environment running the script had user-level privilege, it was not allowed to call int 14 and so int 13, for general protection faults and invalid privilege access, was generated instead.
+
+Question 3: The user can execute int 3 because the privilege level of a breakpoint exception is set to ring 3 in the IDT, meaning a user space environment can generate this exception for debugging purposes. We can generate the int 14 general protection fault by changing the DPL of the breakpoint exception in the IDT to ring level 0. That way, when a user attempts to generate a breakpoint exception, they will not have access to do so and a general protection fault will be generated instead.
+
+Question 4: The primary reason for these mechanisms is to protect the kernel and processes relying on the kernel from constant interrupts/exceptions from user processes. If user processes were given the ability to constantly trap into the kernel and bypass the privilege level checking, then the kernel would be susceptible to attacks from malicious user processes.
